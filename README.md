@@ -1,14 +1,10 @@
-# CMake based C++ template
+# Data structure and algorithm practice
 
-![Windows](https://github.com/maidamai0/cpp_template/actions/workflows/windows.yml/badge.svg)
-![Linux](https://github.com/maidamai0/cpp_template/actions/workflows/linux.yml/badge.svg)
+![Windows](https://github.com/maidamai0/data_sturcture_and_algorithm/actions/workflows/windows.yml/badge.svg)
+![Linux](https://github.com/maidamai0/data_sturcture_and_algorithm/actions/workflows/linux.yml/badge.svg)
 
-This is a C++ tempalte with following features:
-
-* Use [CMake](https://cmake.org/download/) to orgonise code
-* Use [Ninja](https://ninja-build.org/) to build
-* Use [git-chglog](https://github.com/git-chglog/git-chglog) to generate changelog
-* Use [clang-format](https://clang.llvm.org/docs/ClangFormat.html) to keep code style
+Referenced books:
+* [Data Structures & Algorithm Analysis by Clifford A. Shaffer](https://people.cs.vt.edu/shaffer/Book/)
 
 Submodules:
 
