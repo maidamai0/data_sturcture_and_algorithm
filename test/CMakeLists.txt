@@ -1,4 +1,4 @@
-file(GLOB srcs *_test.cpp)
+file(GLOB srcs *.cpp)
 foreach(src ${srcs})
   get_filename_component(test_name ${src} NAME_WLE)
   add_executable(${test_name} ${src})
