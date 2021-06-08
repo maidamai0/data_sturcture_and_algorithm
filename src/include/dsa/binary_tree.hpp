@@ -87,12 +87,12 @@ class BinaryTree {
     return cnt;
   }
 
- private:
-  void print() const { fmt::print("{}\n", value_); }
+ protected:
+  virtual void print() const { fmt::print("{}\n", value_); }
 
- private:
-  value_type value_;
-  BinaryTree *left_ = nullptr;
-  BinaryTree *right_ = nullptr;
+  protected:
+   value_type value_;
+   BinaryTree *left_ = nullptr;
+   BinaryTree *right_ = nullptr;
 };
 }  // namespace dsa
