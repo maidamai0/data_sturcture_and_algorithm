@@ -1,5 +1,5 @@
 #include "doctest/doctest.h"
-#include "dsa/tree.hpp"
+#include "dsa/binary_tree.hpp"
 
 TEST_CASE("traverse binary tree") {
   dsa::BinaryTree<int> tree(0);
