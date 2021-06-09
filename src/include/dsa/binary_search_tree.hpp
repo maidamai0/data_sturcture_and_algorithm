@@ -14,93 +14,102 @@
 #include "fmt/format.h"
 
 namespace dsa {
+
+namespace details {
 template <typename KeyType, typename ValueType>
-class BinarySearchTree final {
- public:
+struct BinarySearchTreeNode {
   using key_type = KeyType;
   using value_type = ValueType;
 
+  BinarySearchTreeNode(const key_type& key, const value_type& value)
+      : key_(key), value_(value) {}
+
+  key_type key_;
+  value_type value_;
+  std::unique_ptr<BinarySearchTreeNode> left_;
+  std::unique_ptr<BinarySearchTreeNode> right_;
+};
+
+template <typename KeyType, typename ValueType,
+          typename NodeType = BinarySearchTreeNode<KeyType, ValueType>,
+          typename NodePtr =
+              std::unique_ptr<BinarySearchTreeNode<KeyType, ValueType>>>
+void node_insert(NodePtr& root, const KeyType& key, const ValueType& value) {
+  if (!root) {
+    root = std::make_unique<NodeType>(key, value);
+    return;
+  }
+
+  if (key < root->key_) {
+    node_insert(root->left_, key, value);
+  } else {
+    node_insert(root->right_, key, value);
+  }
+}
+
+template <typename NodePtr>
+auto node_size(const NodePtr& root) {
+  if (!root) {
+    return size_t(0);
+  }
+
+  size_t cnt = 1;
+  cnt += node_size(root->left_);
+  cnt += node_size(root->right_);
+
+  return cnt;
+}
+
+template <typename NodePtr>
+void node_in_order(const NodePtr& root) {
+  if (!root) {
+    return;
+  }
+
+  node_in_order(root->left_);
+  fmt::print("{}:{}\n", root->key_, root->value_);
+  node_in_order(root->right_);
+}
+
+}  // namespace details
+
+template <typename KeyType, typename ValueType>
+class BinarySearchTree final {
+ public:
+  using tree_node_t = details::BinarySearchTreeNode<KeyType, ValueType>;
+  using tree_node_ptr = std::unique_ptr<tree_node_t>;
+  using key_type = typename tree_node_t::key_type;
+  using value_type = typename tree_node_t::value_type;
+
   BinarySearchTree() = default;
-  BinarySearchTree(const key_type& key, const value_type& value)
-      : key_(std::make_optional<key_type>(key)), value_(value) {}
 
   void Emplace(const key_type& key, const value_type& value) {
-    if (!key_) {
-      key_ = std::make_optional<key_type>(key);
-      value_ = value;
-      return;
-    }
-
-    if (key < key_) {
-      if (left_) {
-        left_->Emplace(key, value);
-      } else {
-        left_ = std::make_unique<BinarySearchTree>(key, value);
-      }
-
-      return;
-    }
-
-    if (right_) {
-      right_->Emplace(key, value);
-    } else {
-      right_ = std::make_unique<BinarySearchTree>(key, value);
-    }
+    node_insert(root_, key, value);
   }
+  size_t Size() const { return node_size(root_); }
+  void InOrder() const { return node_in_order(root_); }
+  auto Get(const key_type& key) { return node_get(root_, key); }
 
-  size_t Size() const {
-    size_t cnt = 0;
-    if (key_) {
-      cnt += 1;
+ private:
+  // TODO (tonghao): 2021-06-09
+  // move out of class
+  static auto node_get(const tree_node_ptr& root, const key_type& key) {
+    if (!root) {
+      return std::make_optional<ValueType>();
     }
 
-    if (left_) {
-      cnt += left_->Size();
-    }
-    if (right_) {
-      cnt += right_->Size();
+    if (key == root->key_) {
+      return std::make_optional<ValueType>(root->value_);
     }
 
-    return cnt;
-  }
-
-  void InOrder() const {
-    if (left_) {
-      left_->InOrder();
+    if (key < root->key_) {
+      return node_get(root->left_, key);
     }
 
-    if (key_) {
-      print();
-    }
-
-    if (right_) {
-      right_->InOrder();
-    }
-  }
-
-  auto Get(const key_type& key) {
-    if (key_ && key == key_) {
-      return std::make_optional<value_type>(value_);
-    }
-
-    if (key < key_ && left_) {
-      return left_->Get(key);
-    }
-
-    if (key >= key_ && right_) {
-      return right_->Get(key);
-    }
-
-    return std::make_optional<value_type>();
+    return node_get(root->right_, key);
   }
 
  private:
-  void print() const { fmt::print("{}:{}\n", key_.value(), value_); }
-
- private:
-  std::optional<key_type> key_;
-  value_type value_;
-  std::unique_ptr<BinarySearchTree> left_;
-  std::unique_ptr<BinarySearchTree> right_;
+  tree_node_ptr root_;
 };
 }  // namespace dsa
