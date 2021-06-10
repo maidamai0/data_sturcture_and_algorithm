@@ -12,87 +12,104 @@
  */
 
 #include <cstddef>
+#include <memory>
 
 #include "fmt/format.h"
 
 namespace dsa {
 
+namespace details {
+template <typename T>
+struct BinaryTreeNode {
+  using value_type = T;
+  using node_ptr = std::unique_ptr<BinaryTreeNode>;
+
+  BinaryTreeNode(const value_type &value) : value_(value) {}
+
+  value_type value_{};
+  node_ptr left_;
+  node_ptr right_;
+};
+
+template <typename T>
+void node_child(std::unique_ptr<BinaryTreeNode<T>> &child, const T v) {
+  if (child) {
+    child->value_ = v;
+  } else {
+    child = std::make_unique<BinaryTreeNode<T>>(v);
+  }
+}
+
+template <typename T>
+void node_print(const std::unique_ptr<BinaryTreeNode<T>> &node) {
+  fmt::print("{}\n", node->value_);
+}
+
+template <typename T>
+void node_pre_order(const std::unique_ptr<BinaryTreeNode<T>> &root) {
+  if (!root) {
+    return;
+  }
+  node_print(root);
+  node_in_order(root->left_);
+  node_in_order(root->right_);
+}
+
+template <typename T>
+void node_in_order(const std::unique_ptr<BinaryTreeNode<T>> &root) {
+  if (!root) {
+    return;
+  }
+  node_in_order(root->left_);
+  node_print(root);
+  node_in_order(root->right_);
+}
+
+template <typename T>
+void node_post_order(const std::unique_ptr<BinaryTreeNode<T>> &root) {
+  if (!root) {
+    return;
+  }
+  node_in_order(root->left_);
+  node_in_order(root->right_);
+  node_print(root);
+}
+
+template <typename T>
+size_t node_size(const std::unique_ptr<BinaryTreeNode<T>> &root) {
+  if (!root) {
+    return 0;
+  }
+  return 1 + node_size(root->left_) + node_size(root->right_);
+}
+
+}  // namespace details
+
 template <typename T>
 class BinaryTree {
  public:
   using value_type = T;
+  using tree_node_ptr = std::unique_ptr<details::BinaryTreeNode<T>>;
 
-  BinaryTree(const value_type &value) : value_(value) {}
-  void SetLeft(const value_type &left) {
-    if (left_) {
-      delete left_;
-    }
-
-    left_ = new BinaryTree(left);
+  BinaryTree(const value_type &value)
+      : root_(std::make_unique<details::BinaryTreeNode<T>>(value)) {}
+  void SetLeft(const value_type &v) {
+    return details::node_child(root_->left_, v);
   }
 
-  void SetRight(const value_type &right) {
-    if (right_) {
-      delete right_;
-    }
-
-    right_ = new BinaryTree(right);
+  void SetRight(const value_type &v) {
+    return details::node_child(root_->right_, v);
   }
 
-  void PreOrder() const {
-    print();
-    if (left_) {
-      left_->print();
-    }
+  void PreOrder() const { return details::node_pre_order(root_); }
 
-    if (right_) {
-      right_->print();
-    }
-  }
+  void PostOrder() const { return details::node_post_order(root_); }
 
-  void PostOrder() const {
-    if (left_) {
-      left_->print();
-    }
+  void InOrder() const { return details::node_in_order(root_); }
 
-    if (right_) {
-      right_->print();
-    }
-
-    print();
-  }
-
-  void InOrder() const {
-    if (left_) {
-      left_->print();
-    }
-
-    print();
-
-    if (right_) {
-      right_->print();
-    }
-  }
-
-  auto Size() const -> size_t {
-    std::size_t cnt = 1;
-    if (left_) {
-      cnt += left_->Size();
-    }
-
-    if (right_) {
-      cnt += right_->Size();
-    }
-
-    return cnt;
-  }
+  auto Size() const -> size_t { return details::node_size(root_); }
 
  protected:
-  virtual void print() const { fmt::print("{}\n", value_); }
-
- protected:
-  value_type value_;
-  BinaryTree *left_ = nullptr;
-  BinaryTree *right_ = nullptr;
+  tree_node_ptr root_;
 };
 }  // namespace dsa
