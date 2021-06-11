@@ -32,21 +32,24 @@ struct BinaryTreeNode {
 };
 
 template <typename T>
-void node_child(std::unique_ptr<BinaryTreeNode<T>> &child, const T v) {
+using TreeType = BinaryTreeNode<T>;
+
+template <typename T>
+void node_child(std::unique_ptr<TreeType<T>> &child, const T v) {
   if (child) {
     child->value_ = v;
   } else {
-    child = std::make_unique<BinaryTreeNode<T>>(v);
+    child = std::make_unique<TreeType<T>>(v);
   }
 }
 
 template <typename T>
-void node_print(const std::unique_ptr<BinaryTreeNode<T>> &node) {
+void node_print(const T &node) {
   fmt::print("{}\n", node->value_);
 }
 
 template <typename T>
-void node_pre_order(const std::unique_ptr<BinaryTreeNode<T>> &root) {
+void node_pre_order(const T &root) {
   if (!root) {
     return;
   }
@@ -56,7 +59,7 @@ void node_pre_order(const std::unique_ptr<BinaryTreeNode<T>> &root) {
 }
 
 template <typename T>
-void node_in_order(const std::unique_ptr<BinaryTreeNode<T>> &root) {
+void node_in_order(const T &root) {
   if (!root) {
     return;
   }
@@ -66,7 +69,7 @@ void node_in_order(const std::unique_ptr<BinaryTreeNode<T>> &root) {
 }
 
 template <typename T>
-void node_post_order(const std::unique_ptr<BinaryTreeNode<T>> &root) {
+void node_post_order(const T &root) {
   if (!root) {
     return;
   }
@@ -76,7 +79,7 @@ void node_post_order(const std::unique_ptr<BinaryTreeNode<T>> &root) {
 }
 
 template <typename T>
-size_t node_size(const std::unique_ptr<BinaryTreeNode<T>> &root) {
+size_t node_size(const T &root) {
   if (!root) {
     return 0;
   }

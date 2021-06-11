@@ -30,13 +30,17 @@ struct BinarySearchTreeNode {
   std::unique_ptr<BinarySearchTreeNode> right_;
 };
 
-template <typename KeyType, typename ValueType,
-          typename NodeType = BinarySearchTreeNode<KeyType, ValueType>,
-          typename NodePtr =
-              std::unique_ptr<BinarySearchTreeNode<KeyType, ValueType>>>
-void node_insert(NodePtr& root, const KeyType& key, const ValueType& value) {
+template <typename KeyT, typename ValueT>
+using NodeType = BinarySearchTreeNode<KeyT, ValueT>;
+
+template <typename KeyT, typename ValueT>
+using NodePtr = std::unique_ptr<BinarySearchTreeNode<KeyT, ValueT>>;
+
+template <typename KeyT, typename ValueT>
+void node_insert(NodePtr<KeyT, ValueT>& root, const KeyT& key,
+                 const ValueT& value) {
   if (!root) {
-    root = std::make_unique<NodeType>(key, value);
+    root = std::make_unique<NodeType<KeyT, ValueT>>(key, value);
     return;
   }
 
@@ -71,6 +75,23 @@ void node_in_order(const NodePtr& root) {
   node_in_order(root->right_);
 }
 
+template <typename KeyT, typename ValueT>
+auto node_get(const NodePtr<KeyT, ValueT>& root, const KeyT& key) {
+  if (!root) {
+    return std::make_optional<ValueT>();
+  }
+
+  if (key == root->key_) {
+    return std::make_optional<ValueT>(root->value_);
+  }
+
+  if (key < root->key_) {
+    return node_get(root->left_, key);
+  }
+
+  return node_get(root->right_, key);
+}
+
 }  // namespace details
 
 template <typename KeyType, typename ValueType>
@@ -89,25 +110,6 @@ class BinarySearchTree final {
   size_t Size() const { return node_size(root_); }
   void InOrder() const { return node_in_order(root_); }
   auto Get(const key_type& key) { return node_get(root_, key); }
-
- private:
-  // TODO (tonghao): 2021-06-09
-  // move out of class
-  static auto node_get(const tree_node_ptr& root, const key_type& key) {
-    if (!root) {
-      return std::make_optional<ValueType>();
-    }
-
-    if (key == root->key_) {
-      return std::make_optional<ValueType>(root->value_);
-    }
-
-    if (key < root->key_) {
-      return node_get(root->left_, key);
-    }
-
-    return node_get(root->right_, key);
-  }
 
  private:
   tree_node_ptr root_;
