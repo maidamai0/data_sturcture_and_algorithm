@@ -8,9 +8,13 @@
  *
  */
 
+#include <algorithm>
+#include <cmath>
+#include <cstdlib>
 #include <memory>
 #include <optional>
 
+#include "dsa/binary_search_tree.hpp"
 #include "fmt/format.h"
 
 namespace dsa {
@@ -92,6 +96,20 @@ auto node_get(const NodePtr<KeyT, ValueT>& root, const KeyT& key) {
   return node_get(root->right_, key);
 }
 
+template <typename KeyT, typename ValueT>
+auto node_height(const NodePtr<KeyT, ValueT>& root) {
+  if (!root) {
+    return 0;
+  }
+
+  return 1 + std::max(node_height(root->left_), node_height(root->right_));
+}
+
+template <typename KeyT, typename ValueT>
+bool node_is_balance(const NodePtr<KeyT, ValueT>& root) {
+  return std::abs(node_height(root->left_) - node_height(root->right_)) <= 1;
+}
+
 }  // namespace details
 
 template <typename KeyType, typename ValueType>
@@ -110,6 +128,8 @@ class BinarySearchTree final {
   size_t Size() const { return node_size(root_); }
   void InOrder() const { return node_in_order(root_); }
   auto Get(const key_type& key) { return node_get(root_, key); }
+  auto Height() const { return details::node_height(root_) - 1; }
+  auto Balance() const { return details::node_is_balance(root_); }
 
  private:
   tree_node_ptr root_;
