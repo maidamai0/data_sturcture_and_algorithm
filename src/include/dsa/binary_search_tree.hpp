@@ -11,7 +11,6 @@
 #include <algorithm>
 #include <cmath>
 #include <cstdlib>
-#include <memory>
 #include <optional>
 
 #include "dsa/binary_search_tree.hpp"
@@ -28,23 +27,28 @@ struct BinarySearchTreeNode {
   BinarySearchTreeNode(const key_type& key, const value_type& value)
       : key_(key), value_(value) {}
 
+  ~BinarySearchTreeNode() {
+    delete left_;
+    delete right_;
+  }
+
   key_type key_;
   value_type value_;
-  std::unique_ptr<BinarySearchTreeNode> left_;
-  std::unique_ptr<BinarySearchTreeNode> right_;
+  BinarySearchTreeNode* left_ = nullptr;
+  BinarySearchTreeNode* right_ = nullptr;
 };
 
 template <typename KeyT, typename ValueT>
 using NodeType = BinarySearchTreeNode<KeyT, ValueT>;
 
 template <typename KeyT, typename ValueT>
-using NodePtr = std::unique_ptr<BinarySearchTreeNode<KeyT, ValueT>>;
+using NodePtr = BinarySearchTreeNode<KeyT, ValueT>*;
 
 template <typename KeyT, typename ValueT>
 void node_insert(NodePtr<KeyT, ValueT>& root, const KeyT& key,
                  const ValueT& value) {
   if (!root) {
-    root = std::make_unique<NodeType<KeyT, ValueT>>(key, value);
+    root = new NodeType<KeyT, ValueT>(key, value);
     return;
   }
 
@@ -56,7 +60,7 @@ void node_insert(NodePtr<KeyT, ValueT>& root, const KeyT& key,
 }
 
 template <typename NodePtr>
-auto node_size(const NodePtr& root) {
+auto node_size(const NodePtr root) {
   if (!root) {
     return size_t(0);
   }
@@ -69,7 +73,7 @@ auto node_size(const NodePtr& root) {
 }
 
 template <typename NodePtr>
-void node_in_order(const NodePtr& root) {
+void node_in_order(const NodePtr root) {
   if (!root) {
     return;
   }
@@ -80,7 +84,7 @@ void node_in_order(const NodePtr& root) {
 }
 
 template <typename KeyT, typename ValueT>
-auto node_get(const NodePtr<KeyT, ValueT>& root, const KeyT& key) {
+auto node_get(const NodePtr<KeyT, ValueT> root, const KeyT& key) {
   if (!root) {
     return std::make_optional<ValueT>();
   }
@@ -97,7 +101,7 @@ auto node_get(const NodePtr<KeyT, ValueT>& root, const KeyT& key) {
 }
 
 template <typename KeyT, typename ValueT>
-auto node_height(const NodePtr<KeyT, ValueT>& root) {
+auto node_height(const NodePtr<KeyT, ValueT> root) {
   if (!root) {
     return 0;
   }
@@ -106,21 +110,22 @@ auto node_height(const NodePtr<KeyT, ValueT>& root) {
 }
 
 template <typename KeyT, typename ValueT>
-bool node_is_balance(const NodePtr<KeyT, ValueT>& root) {
+bool node_is_balance(const NodePtr<KeyT, ValueT> root) {
   return std::abs(node_height(root->left_) - node_height(root->right_)) <= 1;
 }
 
 }  // namespace details
 
 template <typename KeyType, typename ValueType>
-class BinarySearchTree final {
+class BinarySearchTree {
  public:
   using tree_node_t = details::BinarySearchTreeNode<KeyType, ValueType>;
-  using tree_node_ptr = std::unique_ptr<tree_node_t>;
+  using tree_node_ptr = tree_node_t*;
   using key_type = typename tree_node_t::key_type;
   using value_type = typename tree_node_t::value_type;
 
   BinarySearchTree() = default;
+  ~BinarySearchTree() { delete root_; }
 
   void Emplace(const key_type& key, const value_type& value) {
     node_insert(root_, key, value);
@@ -131,7 +136,7 @@ class BinarySearchTree final {
   auto Height() const { return details::node_height(root_) - 1; }
   auto Balance() const { return details::node_is_balance(root_); }
 
- private:
-  tree_node_ptr root_;
+ protected:
+  tree_node_ptr root_ = nullptr;
 };
 }  // namespace dsa
