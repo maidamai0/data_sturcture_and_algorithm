@@ -10,7 +10,7 @@
  * @copyright Copyright (c) 2021
  *
  */
-
+#include <algorithm>
 #include <cstddef>
 #include <memory>
 
@@ -46,6 +46,15 @@ void node_child(std::unique_ptr<TreeType<T>> &child, const T v) {
 template <typename T>
 void node_print(const T &node) {
   fmt::print("{}\n", node->value_);
+}
+
+template <typename T>
+auto node_height(const T &node) {
+  if (!node) {
+    return -1;
+  }
+
+  return 1 + std::max(node_height(node->left_), node_height(node->right_));
 }
 
 template <typename T>
@@ -111,6 +120,8 @@ class BinaryTree {
   void InOrder() const { return details::node_in_order(root_); }
 
   auto Size() const -> size_t { return details::node_size(root_); }
+
+  auto Height() const { return details::node_height(root_); }
 
  protected:
   tree_node_ptr root_;
