@@ -10,6 +10,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <cstdint>
 #include <cstdlib>
 #include <optional>
 
@@ -36,6 +37,7 @@ struct BinarySearchTreeNode {
   value_type value_;
   BinarySearchTreeNode* left_ = nullptr;
   BinarySearchTreeNode* right_ = nullptr;
+  int32_t height_ = 0;
 };
 
 template <typename KeyT, typename ValueT>
@@ -49,14 +51,14 @@ void node_insert(NodePtr<KeyT, ValueT>& root, const KeyT& key,
                  const ValueT& value) {
   if (!root) {
     root = new NodeType<KeyT, ValueT>(key, value);
-    return;
-  }
-
-  if (key < root->key_) {
+  } else if (key < root->key_) {
     node_insert(root->left_, key, value);
   } else {
     node_insert(root->right_, key, value);
   }
+
+  root->height_ =
+      1 + std::max(node_height(root->left_), node_height(root->right_));
 }
 
 template <typename NodePtr>
@@ -103,10 +105,10 @@ auto node_get(const NodePtr<KeyT, ValueT> root, const KeyT& key) {
 template <typename KeyT, typename ValueT>
 auto node_height(const NodePtr<KeyT, ValueT> root) {
   if (!root) {
-    return 0;
+    return -1;
   }
 
-  return 1 + std::max(node_height(root->left_), node_height(root->right_));
+  return root->height_;
 }
 
 template <typename KeyT, typename ValueT>
@@ -133,7 +135,7 @@ class BinarySearchTree {
   size_t Size() const { return node_size(root_); }
   void InOrder() const { return node_in_order(root_); }
   auto Get(const key_type& key) { return node_get(root_, key); }
-  auto Height() const { return details::node_height(root_) - 1; }
+  auto Height() const { return details::node_height(root_); }
   auto Balance() const { return details::node_is_balance(root_); }
 
  protected:

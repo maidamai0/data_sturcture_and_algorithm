@@ -27,6 +27,11 @@ auto node_left_rotation(NodePtr<KeyT, ValueT> root) {
   root->right_ = nullptr;
   new_root->left_ = root;
 
+  root->height_ =
+      1 + std::max(node_height(root->left_), node_height(root->right_));
+  new_root->height_ =
+      1 + std::max(node_height(new_root->left_), node_height(new_root->right_));
+
   return new_root;
 }
 
@@ -35,6 +40,12 @@ auto node_right_rotation(NodePtr<KeyT, ValueT> root) {
   auto& new_root = root->left_;
   root->left_ = nullptr;
   new_root->right_ = root;
+
+  root->height_ =
+      1 + std::max(node_height(root->left_), node_height(root->right_));
+  new_root->height_ =
+      1 + std::max(node_height(new_root->left_), node_height(new_root->rihgt_));
+
   return new_root;
 }
 }  // namespace details
