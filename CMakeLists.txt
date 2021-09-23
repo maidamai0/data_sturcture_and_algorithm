@@ -38,4 +38,6 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/fmt/include)
 add_compile_definitions(DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deps/doctest)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/include)
+
+include_directories(${CMAKE_CURRENT_LIST_DIR}/include)
 add_subdirectory(test)
