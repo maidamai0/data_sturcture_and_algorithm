@@ -5,15 +5,78 @@
 TEST_CASE("binary_search") {
   using namespace dsa::grokking_algorithms::cha01;
   std::vector<int> v = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-  CHECK(binary_search(v, 1)->first == 0);
-  CHECK(binary_search(v, 2)->first == 1);
-  CHECK(binary_search(v, 3)->first == 2);
-  CHECK(binary_search(v, 4)->first == 3);
-  CHECK(binary_search(v, 5)->first == 4);
-  CHECK(binary_search(v, 6)->first == 5);
-  CHECK(binary_search(v, 7)->first == 6);
-  CHECK(binary_search(v, 8)->first == 7);
-  CHECK(binary_search(v, 9)->first == 8);
-  CHECK(binary_search(v, 10)->first == 9);
-  CHECK(!binary_search(v, 11));
+  {
+    const auto [found, index, steps] = binary_search(v, 0);
+    CHECK(!found);
+  }
+
+  {
+    const auto [found, index, steps] = binary_search(v, 1);
+    CHECK(found);
+    CHECK(index == 0);
+    CHECK(steps <= 4);
+  }
+
+  {
+    const auto [found, index, steps] = binary_search(v, 2);
+    CHECK(found);
+    CHECK(index == 1);
+    CHECK(steps <= 4);
+  }
+
+  {
+    const auto [found, index, steps] = binary_search(v, 3);
+    CHECK(found);
+    CHECK(index == 2);
+    CHECK(steps <= 4);
+  }
+
+  {
+    const auto [found, index, steps] = binary_search(v, 4);
+    CHECK(found);
+    CHECK(index == 3);
+    CHECK(steps <= 4);
+  }
+
+  {
+    const auto [found, index, steps] = binary_search(v, 5);
+    CHECK(found);
+    CHECK(index == 4);
+    CHECK(steps <= 4);
+  }
+
+  {
+    const auto [found, index, steps] = binary_search(v, 6);
+    CHECK(found);
+    CHECK(index == 5);
+    CHECK(steps <= 4);
+  }
+
+  {
+    const auto [found, index, steps] = binary_search(v, 7);
+    CHECK(found);
+    CHECK(index == 6);
+    CHECK(steps <= 4);
+  }
+
+  {
+    const auto [found, index, steps] = binary_search(v, 8);
+    CHECK(found);
+    CHECK(index == 7);
+    CHECK(steps <= 4);
+  }
+
+  {
+    const auto [found, index, steps] = binary_search(v, 9);
+    CHECK(found);
+    CHECK(index == 8);
+    CHECK(steps <= 4);
+  }
+
+  {
+    const auto [found, index, steps] = binary_search(v, 10);
+    CHECK(found);
+    CHECK(index == 9);
+    CHECK(steps <= 4);
+  }
 }
