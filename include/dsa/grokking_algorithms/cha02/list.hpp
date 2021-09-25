@@ -5,6 +5,7 @@
 #include <cassert>
 #include <iostream>
 #include <optional>
+#include <sstream>
 #include <utility>
 #include <vector>
 
@@ -74,11 +75,15 @@ class list {
   }
 
   void print() const {
+    std::stringstream ss;
+    ss << "list:[";
     auto cur = head_;
     while (cur != nullptr) {
-      std::cout << cur->value_ << " ";
+      ss << " " << cur->value_;
       cur = cur->next_;
     }
+    ss << " ]";
+    std::cout << ss.str() << std::endl;
   }
 
   size_t size() const {
