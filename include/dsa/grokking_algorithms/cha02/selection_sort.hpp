@@ -1,7 +1,5 @@
 #pragma once
 
-#include <vcruntime.h>
-
 #include <limits>
 #include <tuple>
 #include <utility>
