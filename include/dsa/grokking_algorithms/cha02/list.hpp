@@ -1,7 +1,5 @@
 #pragma once
 
-#include <vcruntime.h>
-
 #include <cassert>
 #include <iostream>
 #include <optional>
