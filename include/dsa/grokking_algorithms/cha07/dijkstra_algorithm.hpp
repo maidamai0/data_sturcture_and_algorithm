@@ -2,6 +2,7 @@
 
 #include <cstddef>
 #include <list>
+#include <stdexcept>
 #include <string>
 #include <unordered_map>
 
@@ -29,6 +30,8 @@ using graph_t = std::unordered_map<key_t, std::list<edge_t>>;
 
 std::size_t dijkstra(const graph_t& graph, const key_t from, const key_t& to) {
   detail::cost_t costs;
+  throw std::runtime_error("Not implemented");
+  return 0;
 }
 
 }  // namespace dsa::grokking_algorithms::cha07
