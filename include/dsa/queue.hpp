@@ -1,5 +1,3 @@
-#include <vcruntime.h>
-
 #include <utility>
 #include <vector>
 
